@@ -1,9 +1,6 @@
 
 package simulacao_zumbi;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 /**
  *
  * @author Victor

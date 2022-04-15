@@ -15,8 +15,6 @@ public class Pessoa {
     }
     
     
-    
-    
     public Integer getX() {
         return x;
     }
