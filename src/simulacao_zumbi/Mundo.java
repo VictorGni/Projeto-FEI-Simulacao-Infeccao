@@ -1,6 +1,8 @@
 
 package simulacao_zumbi;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -19,10 +21,12 @@ public class Mundo {
     public static final String WHITE_BACKGROUND = "\u001B[47m";
     public static final String GREEN_BACKGROUND = "\u001B[42m";
     public static final String BLUE_BACKGROUND= "\u001B[44m";
+    public static final String YELLOW_BACKGROUND = "\u001B[43m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[33m";
  ///////////////////////////////////////////////////////////////////////
  
  // Valor statico para teste de criar 100 objetos com o For
@@ -43,6 +47,9 @@ public class Mundo {
     ArrayList<PessoaSaudavel> ps = new ArrayList();
     private Integer[][] mapa = new Integer[x_map][y_map];
     
+    private PessoaDoente pt1 = new PessoaDoente(15,45);
+    private PessoaDoente pt2 = new PessoaDoente(18,40);
+    ArrayList<PessoaDoente> pd = new ArrayList();
     
     
     
@@ -52,8 +59,8 @@ public class Mundo {
         // Teste de instaciar 100 objetos utilizando a variavei estatica "valor" para verificar se os mesmos ja 
         // aviam sidos criados
         if(valor ==0){
-              for(Integer z=0; z<10; z++){
-                Random gerador = new Random();
+            Random gerador = new Random();
+              for(Integer z=0; z<100; z++){
                 int rdx = gerador.nextInt(26)+1;
                 int rdy = gerador.nextInt(86)+1;
 
@@ -61,16 +68,26 @@ public class Mundo {
                 ps.add(p1);
                 valor++;
             }
+            pd.add(pt1);
+            pd.add(pt2);
+         
+           
         }
+        
+        
         
         // For para utilizar o metodo mover da pessoa saudavel
         for(PessoaSaudavel pp: ps){
             pp.mover();
         }
         
+        //For para pessoas doentes se moverem
+        for(PessoaDoente pp: pd){
+            pp.mover();
+        }
         
         
-        // Logica para setor os valores na matriz
+        // Logica para contrução do mapa
         for(int x =0; x<x_map; x++){
             for(int y=0; y<y_map; y++){
                 
@@ -92,25 +109,45 @@ public class Mundo {
                 
                 else
                     mapa[x][y]=0;
-                
-                
-                //For para verificar as posições dos objetos(x e y) e setar na matriz suas cores
-                for(PessoaSaudavel pessoa : ps){
-                    if(x == pessoa.getX() && y == pessoa.getY()){
-                        mapa[x][y] = pessoa.getCor();
-                    }
-                }
             }
    
         }
         
         
-        
+         //For para verificar as posições dos objetos(x e y)das pessoas doentes e setar na matriz suas cores
+        for(PessoaDoente pessoa: pd){
+            LocalDateTime agora = LocalDateTime.now();
+            DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("ss");
+            Integer horaFormatada = Integer.parseInt(formatterHora.format(agora));
+            Integer tempo_final = horaFormatada - pessoa.getTime();
+           if(tempo_final >= 15){
+               pd.remove(pessoa);
+           }else
+                mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+        }
+
+        //For para verificar as posições dos objetos(x e y)das pessoas saudaveis e setar na matriz suas cores
+        for(PessoaSaudavel pessoa : ps){
+           
+           if(mapa[pessoa.getX()][pessoa.getY()]==4){
+               PessoaDoente temp = new PessoaDoente(pessoa.getX(),pessoa.getY());
+               pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
+               ps.remove(pessoa);
+           }
+           else{
+               mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+           }
+                
+        }       
+                
+
+            
         
         // For utilizado para imprimir a matriz com a logica de suas respectivas cores por valor
         // 1 - branco
         // 2 - verde
-        // 3 - rosa
+        // 3 - azul
+        // 4 - amarelo
         for(int x =0; x<x_map; x++){
            for(int y=0; y<y_map; y++){
                 if(mapa[x][y]==1){
@@ -128,6 +165,13 @@ public class Mundo {
                 else if (mapa[x][y]== 3){
                     System.out.print(BLUE_BACKGROUND);
                     System.out.print(ANSI_BLUE);
+                    System.out.print(mapa[x][y]);
+                    System.out.print(ANSI_RESET);
+                }
+                
+                else if (mapa[x][y]== 4){
+                    System.out.print(YELLOW_BACKGROUND);
+                    System.out.print(ANSI_YELLOW);
                     System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
