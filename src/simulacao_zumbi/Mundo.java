@@ -18,7 +18,8 @@ public class Mundo {
     public static final String BLACK_BACKGROUND = "\u001B[40m";
     public static final String WHITE_BACKGROUND = "\u001B[47m";
     public static final String GREEN_BACKGROUND = "\u001B[42m";
-    public static final String IDK_BACKGROUND = "\u001B[45m";
+    public static final String BLUE_BACKGROUND= "\u001B[44m";
+    public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -51,10 +52,10 @@ public class Mundo {
         // Teste de instaciar 100 objetos utilizando a variavei estatica "valor" para verificar se os mesmos ja 
         // aviam sidos criados
         if(valor ==0){
-              for(Integer z=0; z<6; z++){
+              for(Integer z=0; z<10; z++){
                 Random gerador = new Random();
-                int rdx = gerador.nextInt(31);
-                int rdy = gerador.nextInt(91);
+                int rdx = gerador.nextInt(26)+1;
+                int rdy = gerador.nextInt(86)+1;
 
                 p1 =  new PessoaSaudavel(rdx,rdy);
                 ps.add(p1);
@@ -125,7 +126,8 @@ public class Mundo {
                     System.out.print(ANSI_RESET);
                 }
                 else if (mapa[x][y]== 3){
-                    System.out.print(IDK_BACKGROUND);
+                    System.out.print(BLUE_BACKGROUND);
+                    System.out.print(ANSI_BLUE);
                     System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
@@ -133,6 +135,7 @@ public class Mundo {
                     System.out.print(BLACK_BACKGROUND);
                     System.out.print(ANSI_BLACK);
                     System.out.print(mapa[x][y]);
+                    System.out.print(ANSI_RESET);
                 } 
 
             }
