@@ -14,7 +14,8 @@ import java.time.format.DateTimeFormatter;
 public class Virus {
 
     private Integer segundos;
-
+    
+    // Logica para o tempo de 15 segunos
     public Virus() {
         LocalDateTime agora = LocalDateTime.now();
         DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("ss");
@@ -22,7 +23,7 @@ public class Virus {
         this.segundos = horaFormatada;
     }
     
-    // Colocar o temporizador nesa calsse
+
     public Integer getTime(){
         
        return this.segundos;
