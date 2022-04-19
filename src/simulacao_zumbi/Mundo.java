@@ -22,6 +22,8 @@ public class Mundo {
     public static final String GREEN_BACKGROUND = "\u001B[42m";
     public static final String BLUE_BACKGROUND= "\u001B[44m";
     public static final String YELLOW_BACKGROUND = "\u001B[43m";
+    public static final String RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_RED= "\u001B[31m";
     public static final String ANSI_BLUE = "\u001B[34m";
     public static final String ANSI_BLACK = "\u001B[30m";
     public static final String ANSI_WHITE = "\u001B[37m";
@@ -44,14 +46,14 @@ public class Mundo {
    
 // Criação de um objeto pessoa saudavel, uma lista e a matriz para o mapa;
     private PessoaSaudavel p1;
-    ArrayList<PessoaSaudavel> ps = new ArrayList();
+    ArrayList<PessoaSaudavel> ps = new ArrayList<>();
     private Integer[][] mapa = new Integer[x_map][y_map];
     
     private PessoaDoente pt1 = new PessoaDoente(15,45);
     private PessoaDoente pt2 = new PessoaDoente(18,40);
-    ArrayList<PessoaDoente> pd = new ArrayList();
+    ArrayList<PessoaDoente> pd = new ArrayList<>();
     
-    
+    ArrayList<Zumbi> zb= new ArrayList<>();
     
 //  Metodo para realizar logica e imprimir o mundo
     public void desenhaMundo(){
@@ -84,6 +86,13 @@ public class Mundo {
         //For para pessoas doentes se moverem
         for(PessoaDoente pp: pd){
             pp.mover();
+        }
+        
+        // Verifica se a lista não está vazia, caso não esteja utiliza a função mover
+        if(zb!=null){
+            for(Zumbi zumbi: zb){
+                zumbi.mover();
+            }
         }
         
         
@@ -121,24 +130,36 @@ public class Mundo {
             Integer horaFormatada = Integer.parseInt(formatterHora.format(agora));
             Integer tempo_final = horaFormatada - pessoa.getTime();
            if(tempo_final >= 15){
-               pd.remove(pessoa);
+               Zumbi temp =  new Zumbi(pessoa.getX(),pessoa.getY());
+               deletaObj(pessoa);
+               //pd.remove(pessoa);
+               //zb.add(temp);
+               insereObj(temp);
+               mapa[temp.getX()][temp.getY()] = temp.getCor();
+               
            }else
                 mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
         }
 
         //For para verificar as posições dos objetos(x e y)das pessoas saudaveis e setar na matriz suas cores
         for(PessoaSaudavel pessoa : ps){
-           
-           if(mapa[pessoa.getX()][pessoa.getY()]==4){
-               PessoaDoente temp = new PessoaDoente(pessoa.getX(),pessoa.getY());
-               pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
-               ps.remove(pessoa);
-           }
-           else{
-               mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
-           }
+            mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+//           if(mapa[pessoa.getX()][pessoa.getY()]==4){
+//               PessoaDoente temp = new PessoaDoente(pessoa.getX(),pessoa.getY());
+//               pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
+//               ps.remove(pessoa);
+//           }
+//           else{
+//               mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+//           }
                 
-        }       
+        }
+        
+//        if(zb != null){
+//            for(Zumbi zumbi: zb){
+//                mapa[zumbi.getX()][zumbi.getY()] = zumbi.getCor();
+//            }
+//        }
                 
 
             
@@ -148,6 +169,7 @@ public class Mundo {
         // 2 - verde
         // 3 - azul
         // 4 - amarelo
+        // 5 - vermelho
         for(int x =0; x<x_map; x++){
            for(int y=0; y<y_map; y++){
                 if(mapa[x][y]==1){
@@ -175,6 +197,13 @@ public class Mundo {
                     System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
+                
+                else if (mapa[x][y]== 5){
+                    System.out.print(RED_BACKGROUND);
+                    System.out.print(ANSI_RED);
+                    System.out.print(mapa[x][y]);
+                    System.out.print(ANSI_RESET);
+                }
                 else{
                     System.out.print(BLACK_BACKGROUND);
                     System.out.print(ANSI_BLACK);
@@ -188,5 +217,14 @@ public class Mundo {
         
         
         
+    }
+    
+    
+    public void deletaObj(PessoaDoente doente){
+        pd.remove(doente);
+    }
+    
+    public void insereObj(Zumbi zumbi){
+        zb.add(zumbi);
     }
 }
