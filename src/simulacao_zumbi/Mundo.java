@@ -55,6 +55,8 @@ public class Mundo {
     
     ArrayList<Zumbi> zb= new ArrayList<>();
     
+
+    
 //  Metodo para realizar logica e imprimir o mundo
     public void desenhaMundo(){
         
@@ -123,7 +125,14 @@ public class Mundo {
         }
         
         
-         //For para verificar as posições dos objetos(x e y)das pessoas doentes e setar na matriz suas cores
+        
+        //Lista para realizar a lógica de instaciar outro objeto           
+        ArrayList<PessoaDoente> pd_temp = new ArrayList<>();
+        
+
+        
+        
+        //Percorrer a lista de pessoa doente para verificar se há algum que virou zumbi
         for(PessoaDoente pessoa: pd){
             LocalDateTime agora = LocalDateTime.now();
             DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("ss");
@@ -131,36 +140,67 @@ public class Mundo {
             Integer tempo_final = horaFormatada - pessoa.getTime();
            if(tempo_final >= 15){
                Zumbi temp =  new Zumbi(pessoa.getX(),pessoa.getY());
-               deletaObj(pessoa);
-               //pd.remove(pessoa);
-               //zb.add(temp);
-               insereObj(temp);
-               mapa[temp.getX()][temp.getY()] = temp.getCor();
-               
-           }else
-                mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+               zb.add(temp);
+           }else{
+               pd_temp.add(pessoa);
+           }
         }
+        
+        //Atualizando a lista principal
+        pd = pd_temp;
+        
+        
+        //For para setar as pessoas doentes no mapa
+        for(PessoaDoente pessoa: pd){
+            mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+        }
+        
+        //For para setar os zumbis na tela
+        if(zb != null){
+            for(Zumbi zumbi: zb){
+                mapa[zumbi.getX()][zumbi.getY()] = zumbi.getCor();
+            }
+        }
+        
+        
+        //Lista temporária para adicionar pessoas saudaveis
+        ArrayList<PessoaSaudavel> ps_temp = new ArrayList<>();
 
         //For para verificar as posições dos objetos(x e y)das pessoas saudaveis e setar na matriz suas cores
         for(PessoaSaudavel pessoa : ps){
-            mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
-//           if(mapa[pessoa.getX()][pessoa.getY()]==4){
-//               PessoaDoente temp = new PessoaDoente(pessoa.getX(),pessoa.getY());
-//               pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
-//               ps.remove(pessoa);
-//           }
-//           else{
-//               mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
-//           }
+            if(mapa[pessoa.getX()][pessoa.getY()]== 4 || mapa[pessoa.getX()][pessoa.getY()]== 5 ){
+                pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
+            }
+            else if (mapa[pessoa.getX() +1 ][pessoa.getY()]== 4 || mapa[pessoa.getX() +1 ][pessoa.getY()]== 5 ){
+                pd.add(new PessoaDoente(pessoa.getX()+1,pessoa.getY()));
+            }
+            else if (mapa[pessoa.getX() -1 ][pessoa.getY()]== 4 || mapa[pessoa.getX() -1 ][pessoa.getY()]== 5){
+                pd.add(new PessoaDoente(pessoa.getX()-1,pessoa.getY()));
+            }
+            else if (mapa[pessoa.getX()][pessoa.getY()+1]== 4 || mapa[pessoa.getX()][pessoa.getY()+1]== 5){
+                pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()+1));
+            }
+             else if (mapa[pessoa.getX()][pessoa.getY()-1]== 4 || mapa[pessoa.getX()][pessoa.getY()-1]== 5){
+                pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()-1));
+            }
+             else{
+                 ps_temp.add(pessoa);
+             }
                 
         }
         
-//        if(zb != null){
-//            for(Zumbi zumbi: zb){
-//                mapa[zumbi.getX()][zumbi.getY()] = zumbi.getCor();
-//            }
-//        }
-                
+        
+        //Atualiza a lista original
+        ps = ps_temp;
+
+
+        
+        
+        // For para imprimir as pessoas saudaveis
+        for(PessoaSaudavel pessoa : ps){
+         
+           mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
+        }
 
             
         
@@ -220,11 +260,5 @@ public class Mundo {
     }
     
     
-    public void deletaObj(PessoaDoente doente){
-        pd.remove(doente);
-    }
-    
-    public void insereObj(Zumbi zumbi){
-        zb.add(zumbi);
-    }
+
 }
