@@ -17,6 +17,7 @@ public class Virus {
     private  Integer segundos;
     private  Integer minutos;
     
+    
     // Logica para o tempo de 15 segunos
     public Virus() {
          LocalDateTime primeiro = LocalDateTime.now();
