@@ -18,14 +18,16 @@ public class Virus {
     private  Integer minutos;
     
     
-    // Logica para o tempo de 15 segunos
+    // Logica para o tempo de 15 segunos, é setado os valores do minuto e segundos da criação do objeto
     public Virus() {
          LocalDateTime primeiro = LocalDateTime.now();
          segundos = primeiro.getSecond();
          minutos = primeiro.getMinute();
     }
     
-
+    
+    // O método getTime tem como objetivo verificar o tempo de criaçãp do objeto que utiliza a Classe virus
+    // Caso o tempo seja maior que 15s é retornado true, caso seja menor que 15s é retornado false
     public boolean getTime(){
         LocalDateTime segundo = LocalDateTime.now();
         int segundos_atual = segundo.getSecond();

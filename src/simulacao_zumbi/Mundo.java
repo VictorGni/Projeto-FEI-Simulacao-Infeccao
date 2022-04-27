@@ -25,7 +25,7 @@ public class Mundo {
     public static final String CYAN_BACKGROUND = "\033[46m \033[0m";
  ///////////////////////////////////////////////////////////////////////
  
- // Valor statico para teste de criar 100 objetos com o For
+ // Valor statico para teste de criar 100 objetos com o For e para criar os Soldados uma única vez
     
     static int valor =0;
     static int valor_soldado =0;
@@ -40,7 +40,7 @@ public class Mundo {
 /////////////////////////////////////////////////////////////////////// 
    
    
-// Criação de um objeto pessoaDoente saudavel, uma lista e a matriz para o mapa;
+// Criação de listas e objetos para a lógica da simulação
     private ArrayList<PessoaSaudavel> ps = new ArrayList<>();
     private Integer[][] mapa = new Integer[x_map][y_map];
     private PessoaDoente pt1 = new PessoaDoente(15,5);
@@ -50,13 +50,15 @@ public class Mundo {
     
     private ArrayList<Zumbi> zb= new ArrayList<>();
     
-
+/////////////////////////////////////////////////////////////////////// 
+    
+    
 
 //  Metodo para realizar logica e imprimir o mundo
     public void desenhaMundo(){
         
-        // Teste de instaciar 100 objetos utilizando a variavei estatica "valor" para verificar se os mesmos ja 
-        // aviam sidos criados
+        // If para verificar se os objetos já foram instaciados
+        // Caso não, o mesmo instacia 100 objetos do tipo PessoaSaudavel e adiciona duas pessoas doentes
         if(valor ==0){
             Random gerador = new Random();
               for(Integer z=0; z<100; z++){
@@ -82,13 +84,20 @@ public class Mundo {
 
         //Percorrer a lista de pessoaDoente doente para verificar se há algum que virou zumbi
         for(PessoaDoente pessoaDoente: pd){
+            
+              // Caso o tempo de uma pessoa doente seja maior de 15s e o mesmo não esteja no hospital;
+              // É incluido um zumbi na lista de Zumbis 
               if(pessoaDoente.getTime() && mapa[pessoaDoente.getX()][pessoaDoente.getY()]!=2){
                  Zumbi temp =  new Zumbi(pessoaDoente.getX(),pessoaDoente.getY());
                  zb.add(temp);
               }
+              
+              // Se a pessoa doente "entra" no hospital, é adiciona uma pessoa saudavel na mesma posição 
               else if( pessoaDoente.getTime()==false && mapa[pessoaDoente.getX()][pessoaDoente.getY()] == 2 ){
                   ps.add(new PessoaSaudavel(pessoaDoente.getX(),pessoaDoente.getY()));
               }
+              
+              // O restante é adicionado a uma lista temporária
               else{
                pd_temp.add(pessoaDoente);
            }
@@ -117,10 +126,11 @@ public class Mundo {
         }
         
         
-        //Lista temporária para adicionar pessoas saudaveis
+        // Lista temporária para adicionar pessoas saudaveis
         ArrayList<PessoaSaudavel> ps_temp = new ArrayList<>();
 
-        //For para verificar as posições dos objetos(x e y)das pessoas saudaveis e setar na matriz suas cores
+        // For para verificar as posições dos objetos(x e y)das pessoas saudaveis, caso haja uma pessoa doente ou um zumbi
+        // ao lado ou na mesma posição é excluido a pessoa saúdavel e adicionado uma pessoa doente 
         for(PessoaSaudavel pessoa : ps){
             if(mapa[pessoa.getX()][pessoa.getY()]== 4 || mapa[pessoa.getX()][pessoa.getY()]== 5 ){
                 pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
@@ -165,8 +175,11 @@ public class Mundo {
  
      }
     
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
     
+    // Método para criar o mapa
+   
     public void criaMapa(){
 
         // Logica para contrução do mapa
@@ -195,7 +208,13 @@ public class Mundo {
 
         }
     }
-        
+    
+    
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    // Metodo para imprimir o mapa
+    
     public void imprimirMapa(){ 
         // For utilizado para imprimir a matriz com a logica de suas respectivas cores por valor
         // 1 - branco
@@ -245,8 +264,11 @@ public class Mundo {
  
     }
     
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+   
+    // Método para mover os objetos nas listas
     
-   public void mover(){
+    public void mover(){
        // For para utilizar o metodo mover da pessoaDoente saudavel
         for(PessoaSaudavel pp: ps){
             pp.mover();
@@ -272,8 +294,12 @@ public class Mundo {
         }
    }
    
-   
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+   //Método da solução dos soldados
+    
    public void solucaoSoldado(){
+       // If que verifica se os soldados já foram criados
        if(valor_soldado == 0){
           Random aleatorio = new Random();
           for(int x=0;x<25;x++){
@@ -285,7 +311,7 @@ public class Mundo {
           valor_soldado++;
        }
         
-          
+        // Método para criar o mapa
         this.criaMapa();
         
         // For para setar os soldados
@@ -296,6 +322,7 @@ public class Mundo {
         //Lista temporária de Zumbi
         ArrayList<Zumbi> zb_temp = new ArrayList<>();
         
+        // For para verificar se existe algum soldado ao lado dos zumbis, caso sim, os zumbi é excluido da lista (eliminado)
         for(Zumbi zumbi: zb){
             if(mapa[zumbi.getX()][zumbi.getY()]== 6 || mapa[zumbi.getX()][zumbi.getY()]== 6 ){
                
@@ -317,20 +344,26 @@ public class Mundo {
              }
         }
         
-        
+        // Limpeza e atualização da lista de zumbis
         zb.clear();
         zb = zb_temp;
        
-        
+        // For para setar os zumbis no mapa
         for(Zumbi zumbi: zb){
             mapa[zumbi.getX()][zumbi.getY()] = zumbi.getCor();
         }
         
+        
+        // Método para imprimir no mapa
         this.imprimirMapa();
     
         
    }
    
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+   
+   // Métodos para verificar a quantidade de objetos nas listas
    public int quantidadePessoaSaudavel(){
        return ps.size();
    }

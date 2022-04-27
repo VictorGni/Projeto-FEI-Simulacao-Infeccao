@@ -12,7 +12,9 @@ public class PessoaSaudavel extends Pessoa implements IMovable{
     public PessoaSaudavel(Integer x, Integer y) {
         super(x, y, 3);
     }
-
+    
+    
+    // Método para realizar a movimentação das Pessoas Saúdaveis
     @Override
     public void mover() {
         Random gerador = new Random();

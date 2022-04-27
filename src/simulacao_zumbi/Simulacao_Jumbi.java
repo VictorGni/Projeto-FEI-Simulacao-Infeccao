@@ -5,17 +5,20 @@ package simulacao_zumbi;
  *
  * @author Victor
  */
+
+//Classe com método main para realizar a simulação
 public class Simulacao_Jumbi {
 
-
+    
     public static void main(String[] args){
        
+        // Variáveis nescessárias para a lógica da simulação
         int stop=0;
         Mundo md = new Mundo();
         
         
         
-        //Teste imprimir mundo
+        //While para realizar a simulação
         while(stop ==0){
             System.out.println();
             System.out.println();
@@ -33,6 +36,7 @@ public class Simulacao_Jumbi {
                 System.out.print("");
             }
             
+            // Caso todas as pessoas virem zumbis a solução é acionada
             if(md.quantidadeZumbi()==102){
                 
                 for(int x=0; x<10; x++){

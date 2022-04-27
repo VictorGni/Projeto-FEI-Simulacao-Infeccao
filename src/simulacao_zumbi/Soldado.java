@@ -16,6 +16,8 @@ public class Soldado extends Pessoa implements IMovable {
         super(x,y,6);
     }
     
+    
+    // Método para realizar a movimentação dos soldados
     @Override
     public void mover() {
         Random gerador = new Random();
