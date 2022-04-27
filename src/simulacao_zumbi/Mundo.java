@@ -1,4 +1,3 @@
-
 package simulacao_zumbi;
 
 import java.time.LocalDateTime;
@@ -18,22 +17,19 @@ public class Mundo {
 //Variaveis para alteração de cor de fundo e de texto
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String BLACK_BACKGROUND = "\u001B[40m";
-    public static final String WHITE_BACKGROUND = "\u001B[47m";
-    public static final String GREEN_BACKGROUND = "\u001B[42m";
-    public static final String BLUE_BACKGROUND= "\u001B[44m";
-    public static final String YELLOW_BACKGROUND = "\u001B[43m";
-    public static final String RED_BACKGROUND = "\u001B[41m";
-    public static final String ANSI_RED= "\u001B[31m";
-    public static final String ANSI_BLUE = "\u001B[34m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_WHITE = "\u001B[37m";
-    public static final String ANSI_GREEN = "\u001B[32m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String WHITE_BACKGROUND = "\033[47m \033[0m";
+    public static final String GREEN_BACKGROUND = "\033[42m \033[0m";
+    public static final String BLUE_BACKGROUND= "\033[44m \033[0m";
+    public static final String YELLOW_BACKGROUND = "\033[43m \033[0m";
+    public static final String RED_BACKGROUND = "\033[41m \033[0m";
+    public static final String CYAN_BACKGROUND = "\033[46m \033[0m";
  ///////////////////////////////////////////////////////////////////////
  
- // Valor statico para teste de criar 100 objetos com o For
+ // Valor statico para teste de criar 100 objetos com o For e para criar os Soldados uma única vez
     
     static int valor =0;
+    static int valor_soldado =0;
+    
 ///////////////////////////////////////////////////////////////////////
  
     
@@ -44,116 +40,83 @@ public class Mundo {
 /////////////////////////////////////////////////////////////////////// 
    
    
-// Criação de um objeto pessoa saudavel, uma lista e a matriz para o mapa;
-    private PessoaSaudavel p1;
-    ArrayList<PessoaSaudavel> ps = new ArrayList<>();
+// Criação de listas e objetos para a lógica da simulação
+    private ArrayList<PessoaSaudavel> ps = new ArrayList<>();
     private Integer[][] mapa = new Integer[x_map][y_map];
+    private PessoaDoente pt1 = new PessoaDoente(15,5);
+    private PessoaDoente pt2 = new PessoaDoente(18,65);
+    private ArrayList<PessoaDoente> pd = new ArrayList<>();
+    private ArrayList<Soldado> soldados = new ArrayList<>();
     
-    private PessoaDoente pt1 = new PessoaDoente(15,45);
-    private PessoaDoente pt2 = new PessoaDoente(18,40);
-    ArrayList<PessoaDoente> pd = new ArrayList<>();
+    private ArrayList<Zumbi> zb= new ArrayList<>();
     
-    ArrayList<Zumbi> zb= new ArrayList<>();
+/////////////////////////////////////////////////////////////////////// 
+    
     
 
-    
 //  Metodo para realizar logica e imprimir o mundo
     public void desenhaMundo(){
         
-        // Teste de instaciar 100 objetos utilizando a variavei estatica "valor" para verificar se os mesmos ja 
-        // aviam sidos criados
+        // If para verificar se os objetos já foram instaciados
+        // Caso não, o mesmo instacia 100 objetos do tipo PessoaSaudavel e adiciona duas pessoas doentes
         if(valor ==0){
             Random gerador = new Random();
               for(Integer z=0; z<100; z++){
-                int rdx = gerador.nextInt(26)+1;
+                int rdx = gerador.nextInt(27)+1;
                 int rdy = gerador.nextInt(86)+1;
 
-                p1 =  new PessoaSaudavel(rdx,rdy);
-                ps.add(p1);
+                ps.add(new PessoaSaudavel(rdx,rdy));
                 valor++;
             }
             pd.add(pt1);
             pd.add(pt2);
-         
-           
+
         }
         
-        
-        
-        // For para utilizar o metodo mover da pessoa saudavel
-        for(PessoaSaudavel pp: ps){
-            pp.mover();
-        }
-        
-        //For para pessoas doentes se moverem
-        for(PessoaDoente pp: pd){
-            pp.mover();
-        }
-        
-        // Verifica se a lista não está vazia, caso não esteja utiliza a função mover
-        if(zb!=null){
-            for(Zumbi zumbi: zb){
-                zumbi.mover();
-            }
-        }
-        
-        
-        // Logica para contrução do mapa
-        for(int x =0; x<x_map; x++){
-            for(int y=0; y<y_map; y++){
-                
-                if((x==0 || x== 29) ||(y==0 || y==89) ){
-                    mapa[x][y]=1;
-                }
-                
-                else if((x>5 && x<=10) && (y>10 && y<=30)){
-                    mapa[x][y]=2;
-                }
-                
-                else if((x>5 && x<=10) && (y>56 && y<=76)){
-                    mapa[x][y]=2;
-                }
-                
-                else if((x>18 && x<=23) && (y>32 && y<=52)){
-                    mapa[x][y]=2;
-                }
-                
-                else
-                    mapa[x][y]=0;
-            }
-   
-        }
+        //Chama o método de criar o mapa
+        this.criaMapa();
         
         
         
-        //Lista para realizar a lógica de instaciar outro objeto           
+        //Lista temporaria para realizar a lógica de instaciar pessoaDoente doentes          
         ArrayList<PessoaDoente> pd_temp = new ArrayList<>();
         
 
-        
-        
-        //Percorrer a lista de pessoa doente para verificar se há algum que virou zumbi
-        for(PessoaDoente pessoa: pd){
-            LocalDateTime agora = LocalDateTime.now();
-            DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("ss");
-            Integer horaFormatada = Integer.parseInt(formatterHora.format(agora));
-            Integer tempo_final = horaFormatada - pessoa.getTime();
-           if(tempo_final >= 15){
-               Zumbi temp =  new Zumbi(pessoa.getX(),pessoa.getY());
-               zb.add(temp);
-           }else{
-               pd_temp.add(pessoa);
+        //Percorrer a lista de pessoaDoente doente para verificar se há algum que virou zumbi
+        for(PessoaDoente pessoaDoente: pd){
+            
+              // Caso o tempo de uma pessoa doente seja maior de 15s e o mesmo não esteja no hospital;
+              // É incluido um zumbi na lista de Zumbis 
+              if(pessoaDoente.getTime() && mapa[pessoaDoente.getX()][pessoaDoente.getY()]!=2){
+                 Zumbi temp =  new Zumbi(pessoaDoente.getX(),pessoaDoente.getY());
+                 zb.add(temp);
+              }
+              
+              // Se a pessoa doente "entra" no hospital, é adiciona uma pessoa saudavel na mesma posição 
+              else if( pessoaDoente.getTime()==false && mapa[pessoaDoente.getX()][pessoaDoente.getY()] == 2 ){
+                  ps.add(new PessoaSaudavel(pessoaDoente.getX(),pessoaDoente.getY()));
+              }
+              
+              // O restante é adicionado a uma lista temporária
+              else{
+               pd_temp.add(pessoaDoente);
            }
         }
         
+        
         //Atualizando a lista principal
+        pd.clear();
         pd = pd_temp;
         
+       
         
         //For para setar as pessoas doentes no mapa
         for(PessoaDoente pessoa: pd){
             mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
         }
+        
+        
+        
         
         //For para setar os zumbis na tela
         if(zb != null){
@@ -163,10 +126,11 @@ public class Mundo {
         }
         
         
-        //Lista temporária para adicionar pessoas saudaveis
+        // Lista temporária para adicionar pessoas saudaveis
         ArrayList<PessoaSaudavel> ps_temp = new ArrayList<>();
 
-        //For para verificar as posições dos objetos(x e y)das pessoas saudaveis e setar na matriz suas cores
+        // For para verificar as posições dos objetos(x e y)das pessoas saudaveis, caso haja uma pessoa doente ou um zumbi
+        // ao lado ou na mesma posição é excluido a pessoa saúdavel e adicionado uma pessoa doente 
         for(PessoaSaudavel pessoa : ps){
             if(mapa[pessoa.getX()][pessoa.getY()]== 4 || mapa[pessoa.getX()][pessoa.getY()]== 5 ){
                 pd.add(new PessoaDoente(pessoa.getX(),pessoa.getY()));
@@ -191,74 +155,230 @@ public class Mundo {
         
         
         //Atualiza a lista original
+        ps.clear();
         ps = ps_temp;
-
+        
 
         
         
-        // For para imprimir as pessoas saudaveis
+        // For para setar as pessoas saudaveis
         for(PessoaSaudavel pessoa : ps){
          
            mapa[pessoa.getX()][pessoa.getY()] = pessoa.getCor();
         }
-
-            
         
+        
+        
+        // Método para imprimir o mapa
+        this.imprimirMapa();
+        
+ 
+     }
+    
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    // Método para criar o mapa
+   
+    public void criaMapa(){
+
+        // Logica para contrução do mapa
+        for(int x =0; x<x_map; x++){
+            for(int y=0; y<y_map; y++){
+
+                if((x==0 || x== 29) ||(y==0 || y==89) ){
+                    mapa[x][y]=1;
+                }
+
+                else if((x>5 && x<=8) && (y>10 && y<=20)){
+                    mapa[x][y]=2;
+                }
+
+                else if((x>5 && x<=8) && (y>56 && y<=66)){
+                    mapa[x][y]=2;
+                }
+
+                else if((x>18 && x<=21) && (y>32 && y<=42)){
+                    mapa[x][y]=2;
+                }
+
+                else
+                    mapa[x][y]=0;
+            }
+
+        }
+    }
+    
+    
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    
+    // Metodo para imprimir o mapa
+    
+    public void imprimirMapa(){ 
         // For utilizado para imprimir a matriz com a logica de suas respectivas cores por valor
         // 1 - branco
-        // 2 - verde
+        // 2 - cyan
         // 3 - azul
         // 4 - amarelo
         // 5 - vermelho
+        // 6 - cyan
         for(int x =0; x<x_map; x++){
            for(int y=0; y<y_map; y++){
                 if(mapa[x][y]==1){
-                    System.out.print(ANSI_WHITE);
                     System.out.print(WHITE_BACKGROUND);
-                    System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
                 else if(mapa[x][y]==2){
-                    System.out.print(ANSI_GREEN);
-                    System.out.print(GREEN_BACKGROUND);
-                    System.out.print(mapa[x][y]);
+                    System.out.print(CYAN_BACKGROUND);
                     System.out.print(ANSI_RESET);
                 }
                 else if (mapa[x][y]== 3){
                     System.out.print(BLUE_BACKGROUND);
-                    System.out.print(ANSI_BLUE);
-                    System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
                 
                 else if (mapa[x][y]== 4){
                     System.out.print(YELLOW_BACKGROUND);
-                    System.out.print(ANSI_YELLOW);
-                    System.out.print(mapa[x][y]);
                     System.out.print(ANSI_RESET);
                 }
                 
                 else if (mapa[x][y]== 5){
                     System.out.print(RED_BACKGROUND);
-                    System.out.print(ANSI_RED);
-                    System.out.print(mapa[x][y]);
+                    System.out.print(ANSI_RESET);
+                }
+                else if(mapa[x][y] == 6){
+                    System.out.print(GREEN_BACKGROUND);
                     System.out.print(ANSI_RESET);
                 }
                 else{
-                    System.out.print(BLACK_BACKGROUND);
-                    System.out.print(ANSI_BLACK);
-                    System.out.print(mapa[x][y]);
+                    System.out.print(" ");
                     System.out.print(ANSI_RESET);
                 } 
 
             }
             System.out.println();
+            
          }
-        
-        
-        
+  
+ 
     }
     
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+   
+    // Método para mover os objetos nas listas
     
+    public void mover(){
+       // For para utilizar o metodo mover da pessoaDoente saudavel
+        for(PessoaSaudavel pp: ps){
+            pp.mover();
+        }
+        
+        //For para pessoas doentes se moverem
+        for(PessoaDoente pp: pd){
+            pp.mover();
+        }
+        
+        // Verifica se a lista não está vazia, caso não esteja utiliza a função mover
+        if(zb!=null){
+            for(Zumbi zumbi: zb){
+                zumbi.mover();
+            }
+        }
+        
+        // Verifica se existe algum soldado, caso exista ele chama a função mover
+        if(soldados !=null){
+            for(Soldado soldado: soldados){
+                soldado.mover();
+            }
+        }
+   }
+   
+ ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+   //Método da solução dos soldados
+    
+   public void solucaoSoldado(){
+       // If que verifica se os soldados já foram criados
+       if(valor_soldado == 0){
+          Random aleatorio = new Random();
+          for(int x=0;x<25;x++){
+             int rdx = aleatorio.nextInt(27)+1;
+             int rdy = aleatorio.nextInt(86)+1;
 
+             soldados.add(new Soldado(rdx,rdy)); 
+          }
+          valor_soldado++;
+       }
+        
+        // Método para criar o mapa
+        this.criaMapa();
+        
+        // For para setar os soldados
+        for(Soldado soldado: soldados){
+            mapa[soldado.getX()][soldado.getY()]= soldado.getCor();
+        }
+        
+        //Lista temporária de Zumbi
+        ArrayList<Zumbi> zb_temp = new ArrayList<>();
+        
+        // For para verificar se existe algum soldado ao lado dos zumbis, caso sim, os zumbi é excluido da lista (eliminado)
+        for(Zumbi zumbi: zb){
+            if(mapa[zumbi.getX()][zumbi.getY()]== 6 || mapa[zumbi.getX()][zumbi.getY()]== 6 ){
+               
+            }
+            else if (mapa[zumbi.getX() +1 ][zumbi.getY()]== 6 || mapa[zumbi.getX() +1 ][zumbi.getY()]== 6 ){
+                
+            }
+            else if (mapa[zumbi.getX() -1 ][zumbi.getY()]== 6 || mapa[zumbi.getX() -1 ][zumbi.getY()]== 6){
+                
+            }
+            else if (mapa[zumbi.getX()][zumbi.getY()+1]== 6 || mapa[zumbi.getX()][zumbi.getY()+1]== 6){
+                
+            }
+             else if (mapa[zumbi.getX()][zumbi.getY()-1]== 6 || mapa[zumbi.getX()][zumbi.getY()-1]== 6){
+
+            }
+             else{
+                 zb_temp.add(zumbi);
+             }
+        }
+        
+        // Limpeza e atualização da lista de zumbis
+        zb.clear();
+        zb = zb_temp;
+       
+        // For para setar os zumbis no mapa
+        for(Zumbi zumbi: zb){
+            mapa[zumbi.getX()][zumbi.getY()] = zumbi.getCor();
+        }
+        
+        
+        // Método para imprimir no mapa
+        this.imprimirMapa();
+    
+        
+   }
+   
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////
+   
+   
+   // Métodos para verificar a quantidade de objetos nas listas
+   public int quantidadePessoaSaudavel(){
+       return ps.size();
+   }
+   
+   public int quantidadePessoaDoente(){
+       return pd.size();
+   }
+   
+   public int quantidadeZumbi(){
+       return zb.size();
+   }
+   
+
+   
+   
+   
+   
 }

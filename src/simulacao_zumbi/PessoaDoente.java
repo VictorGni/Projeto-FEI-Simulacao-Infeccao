@@ -21,10 +21,12 @@ public class PessoaDoente extends Pessoa implements IMovable {
     }
 
    
-    public Integer getTime(){
+    public boolean getTime(){
         return virus.getTime();
     }
     
+    
+    // Método para realizar a movimentação das Pessoas Doentes
     @Override
     public void mover() {
         
