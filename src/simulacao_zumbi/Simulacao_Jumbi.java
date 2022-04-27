@@ -1,39 +1,91 @@
 
 package simulacao_zumbi;
 
-import java.io.IOException;
-
 /**
  *
  * @author Victor
  */
+
+//Classe com método main para realizar a simulação
 public class Simulacao_Jumbi {
 
-    public static final String ANSI_RESET = "\u001B[0m";
-    public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_BLACK_BACKGROUND = "\u001B[40m";
-   
-    public static void main(String[] args) throws IOException, InterruptedException {
-       
-        PessoaDoente pd =  new PessoaDoente(3,4);
-        Zumbi zb = new Zumbi(7,8);
-        PessoaSaudavel ps = new PessoaSaudavel(25,50);
-       
-        Mundo md = new Mundo();
-        int i=0;
-        while(i<3){
-        md.desenhaMundo();
-          try
-        {
-            Runtime.getRuntime().exec("cmd /c limpa.bat");
-        }
-        catch(Exception e)
-        {
-            System.out.println("Erro");
-        }
-          
-         i++; 
-        }
-    }
     
+    public static void main(String[] args){
+       
+        // Variáveis nescessárias para a lógica da simulação
+        int stop=0;
+        Mundo md = new Mundo();
+        
+        
+        
+        //While para realizar a simulação
+        while(stop ==0){
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println();
+            System.out.println("Quantidade de pessoas Saúdaveis: " + md.quantidadePessoaSaudavel());
+            System.out.println("Quantidade de pessoas Doentes: " + md.quantidadePessoaDoente());
+            System.out.println("Quantidade de Zumbis: " + md.quantidadeZumbi());
+            md.desenhaMundo();
+            md.mover();
+            try{
+                Thread.sleep(300);
+            }
+            catch(Exception e){
+                System.out.print("");
+            }
+            
+            // Caso todas as pessoas virem zumbis a solução é acionada
+            if(md.quantidadeZumbi()==102){
+                
+                for(int x=0; x<10; x++){
+                    System.out.println();
+                }
+                
+                
+                try{
+                    System.out.println("OS SOLDADOS CHEGARAM PARA ELIMINAR OS ZUMBIS!!!");
+                for(int x=0; x<10; x++){
+                    System.out.println();
+                }
+                    Thread.sleep(2000);
+
+                    
+                }
+                catch(Exception e){
+                    System.out.print("");
+                }
+                
+                
+                while(true){
+                    System.out.println();
+                    System.out.println();
+                    System.out.println();
+                    System.out.println();
+                    System.out.println("Quantidade de Zumbis: " + md.quantidadeZumbi());
+                    md.solucaoSoldado();
+                    md.mover();
+                    try{
+                        Thread.sleep(300);
+                    }
+                    catch(Exception e){
+                        System.out.print("");
+                    }
+                    if(md.quantidadeZumbi()==0){
+                        stop++;
+                        break;
+                    }
+                }
+                
+            }
+  
+        }
+        
+        for(int x=0; x<10; x++){
+           System.out.println();
+        }
+        System.out.println("FIM DA SIMULAÇÃO , OS SOLDADOS CONSEGUIRAM ELIMINAR TODOS OS ZUMBIS!!");
+    
+}
 }
