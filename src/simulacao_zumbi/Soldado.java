@@ -1,4 +1,7 @@
-
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package simulacao_zumbi;
 
 import java.util.Random;
@@ -7,50 +10,37 @@ import java.util.Random;
  *
  * @author Victor
  */
-public class PessoaDoente extends Pessoa implements IMovable {
-
-    private Virus virus;
+public class Soldado extends Pessoa implements IMovable {
     
-    public PessoaDoente(Integer x, Integer y) {
-        super(x, y, 4);
-        this.virus = new Virus();
-    }
-    
-    public PessoaDoente(Integer x, Integer y, Integer cor){
-        super(x,y,cor);
-    }
-
-   
-    public boolean getTime(){
-        return virus.getTime();
+    public Soldado(Integer x, Integer y){
+        super(x,y,6);
     }
     
     @Override
     public void mover() {
-        
         Random gerador = new Random();
         
         int rd = gerador.nextInt(4);
         
-        if(rd == 0){
-           if(this.getX()==28){
+        if(rd == 2){
+        if(this.getX()==28){
               this.setX(1);
            }else
            this.setX(this.getX() +1);
         }
-        else if (rd ==1){
+        else if (rd ==3){
             if(this.getX()==1){
                 this.setX(28);
             }else
             this.setX(this.getX()-1);
         }
-        else if (rd == 2){
+        else if (rd == 0){
             if(this.getY()==88){
                 this.setY(1);
             }else
             this.setY(this.getY() +1);
         }
-        else if (rd ==3){
+        else if (rd ==1){
             if(this.getY()==1){
                 this.setY(88);
             }else

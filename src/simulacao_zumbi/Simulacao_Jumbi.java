@@ -8,26 +8,28 @@ package simulacao_zumbi;
 public class Simulacao_Jumbi {
 
 
-    public static void main(String[] args) throws InterruptedException{
+    public static void main(String[] args){
        
        
         Mundo md = new Mundo();
-        PessoaDoente pd = new PessoaDoente(2,2);
         
         
         
         //Teste imprimir mundo
-        int i=0;
-        while(i<5){
-            
-            //System.out.println(pd.getTime());
+        while(true){
+            System.out.println(md.quantidadePd());
+            System.out.println(md.quantidadePs());
+            System.out.println(md.quantidadeZb());
             md.desenhaMundo();
-            Thread.sleep(4000);
-            i++;
-        }
-            
-
-        
+            md.mover();
+            try{
+                Thread.sleep(300);
+            }
+            catch(Exception e){
+                System.out.print("");
+            }
+  
     }
     
+}
 }

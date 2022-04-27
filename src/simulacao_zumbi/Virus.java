@@ -4,6 +4,7 @@
  */
 package simulacao_zumbi;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -13,20 +14,36 @@ import java.time.format.DateTimeFormatter;
  */
 public class Virus {
 
-    private Integer segundos;
+    private  Integer segundos;
+    private  Integer minutos;
     
     // Logica para o tempo de 15 segunos
     public Virus() {
-        LocalDateTime agora = LocalDateTime.now();
-        DateTimeFormatter formatterHora = DateTimeFormatter.ofPattern("ss");
-        Integer horaFormatada = Integer.parseInt(formatterHora.format(agora));
-        this.segundos = horaFormatada;
+         LocalDateTime primeiro = LocalDateTime.now();
+         segundos = primeiro.getSecond();
+         minutos = primeiro.getMinute();
     }
     
 
-    public Integer getTime(){
+    public boolean getTime(){
+        LocalDateTime segundo = LocalDateTime.now();
+        int segundos_atual = segundo.getSecond();
+        int minutos_atual = segundo.getMinute();
         
-       return this.segundos;
+        if(minutos_atual > this.minutos && this.segundos <= 45){
+            return true;
+        }
+        else if(minutos == minutos_atual && ((segundos_atual - this.segundos)>=15)){
+            return true;
+        }
+        else if(minutos_atual> this.minutos && this.segundos>45){
+            if(((60-this.segundos)+segundos_atual)>=15){
+                return true;
+            }else{
+                return false;
+            }
+        }else
+            return false;
     }
    
 }
